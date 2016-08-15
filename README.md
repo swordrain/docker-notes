@@ -50,6 +50,7 @@ WARNING: No swap limit support
 ![Docker Toolbox Install](https://github.com/swordrain/docker-notes/blob/master/image/docker_toolbox_install.png)  
 其中Kitematic是一个镜像的GUI客户端  
 ![Kitematic](https://github.com/swordrain/docker-notes/blob/master/image/kitematic.png)  
+Toolbox本质是通过一个微型的Linux虚拟机来运行Docker  
 
 如果已经有virtual box和git bash，可以不安装，但注意最后生成的快捷方式可能不是已经安装的git bash的路径，而是以Docker Toolbox程序文件夹下的git bash作为启动入口。
 
@@ -97,12 +98,20 @@ sudo docker daemon -D
 使用`sudo stop docker`或`sudo service docker stop`来停止docker  
 使用`sudo start docker`或`sudo service docker start`来启动
 
-Docker用户界面  
+###Docker用户界面  
 *  Shipyard
 *  DockerUI
 *  Kitematic
 
 ##Docker入门
+
+###Docker就绪
+`sudo docker info`返回Docker的信息  
+Docker是基于CS构架的，有一个docker程序，既能作为客户端也能作为服务器端。作为客户端，docker想Docker守护进程发送请求，再对返回的请求结果进行处理。
+
+###运行第一个容器
+运行命令`sudo docker run -i -t ubuntu /bin/bash`
+
 
 
 
