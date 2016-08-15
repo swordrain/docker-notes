@@ -44,5 +44,20 @@ WARNING: No swap limit support
 
 在Mac中，最新版本的OS X可以直接安装docker而无须通过Docker Toolbox
 
-对于Windows，必须是安装Docker Toolbox
+对于Windows，必须是安装Docker Toolbox  
+![Docker Toolbox Install](https://github.com/swordrain/docker-notes/blob/master/image/docker_toolbox_install.png)  
+其中Kitematic是一个镜像的GUI客户端  
+![Kitematic](https://github.com/swordrain/docker-notes/blob/master/image/kitematic.png)  
+
+如果已经有virtual box和git bash，可以不安装，但注意最后生成的快捷方式可能不是已经安装的git bash的路径，而是以Docker Toolbox程序文件夹下的git bash作为启动入口。
+
+如果安装的是Docker Toolbox，要在docker宿主启动时查看一下ip
+```
+docker-machine ip
+```
+![docker-machine-ip](https://github.com/swordrain/docker-notes/blob/master/image/docker-machine-ip.png)  
+当今后docker启动web服务器镜像后，如果要查看效果，需要在外层通过该ip地址来访问的  
+
+Linux机器也可以通过自动安装脚本来安装  
+确保curl命令已经安装
 
