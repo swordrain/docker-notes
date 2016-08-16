@@ -46,11 +46,15 @@ WARNING: No swap limit support
 
 在Mac中，最新版本的OS X可以直接安装docker而无须通过Docker Toolbox
 
-对于Windows，必须是安装Docker Toolbox  
+对于Windows，必须是安装Docker Toolbox（除了win10专业版）
 ![Docker Toolbox Install](https://github.com/swordrain/docker-notes/blob/master/image/docker_toolbox_install.png)  
 其中Kitematic是一个镜像的GUI客户端  
 ![Kitematic](https://github.com/swordrain/docker-notes/blob/master/image/kitematic.png)  
 Toolbox本质是通过一个微型的Linux虚拟机来运行Docker  
+启动之后，能在virtualbox中看到一个运行中名为default的虚拟机
+![Kitematic](https://github.com/swordrain/docker-notes/blob/master/image/virtual_box_default.png)  
+显示该虚拟机  
+![Kitematic](https://github.com/swordrain/docker-notes/blob/master/image/docker_toolbox_show.png)  
 
 如果已经有virtual box和git bash，可以不安装，但注意最后生成的快捷方式可能不是已经安装的git bash的路径，而是以Docker Toolbox程序文件夹下的git bash作为启动入口。
 
