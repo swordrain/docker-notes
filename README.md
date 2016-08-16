@@ -219,3 +219,82 @@ sudo docker rm `sudo docker ps -a -q`
 ```
 
 ##使用Docker镜像和仓库
+###什么是Docker镜像
+Docker镜像由文件系统叠加而成。最底端是一个引导文件系统即bootfs。当容器启动时，会移到内存中，引导文件系统被卸载以留出更多的内存供initrd磁盘镜像使用。  
+Docker镜像第二层是root文件系统rootfs，位于引导文件系统之上。在Docker里，root文件系统永远只能只读。Docker利用union mount技术在root文件系统层上加载更多的只读文件系统。union mount指一次同时加载多个文件系统，但在外面看到只能看到一个文件系统。它将各层文件系统叠加到一起，最终的文件系统包含所有底层的文件和目录。
+Docker将这样的文件系统称之为镜像。一个镜像可以放到另一个镜像的顶部。位于下面的镜像称为parent image，最底部的称为base image。最后当从一个镜像启动容器时，Docker会在该镜像的最顶层加载一个读写文件系统。 
+
+ ————————————————  
+|可写容器       |
+ ————————————————  
+|镜像（Apache） |    
+ ————————————————  
+|镜像（emacs）  |    
+ ————————————————  
+|基础镜像Ubuntu |  
+ ————————————————  
+|引导文件系统   |  
+ ————————————————  
+
+当Docker第一次启动一个容器时，初始的读写层是空的。当文件系统发生改变时，这些变化都会应用到这一层上。这种机制称为copy on write。每个只读镜像层都是只读的，并且以后永远不会变化。当创建一个新容器时，Docker会构建出一个镜像栈，在栈的最顶端添加一个读写层。这个读写层再加上其下面的镜像层以及一些配置数据就构成了一个容器。  
+
+###列出镜像
+```
+sudo docker images
+```
+![docker_images](https://github.com/swordrain/docker-notes/blob/master/image/docker_images.png)  
+镜像从仓库下载下来。镜像保存在仓库中，仓库位于Registry中。默认的Registry是Docker运营的[Docker Hub](https://hub.docker.com/)  
+![docker_hub](https://github.com/swordrain/docker-notes/blob/master/image/docker_hub.png)  
+
+使用`sudo docker pull`拉取镜像  
+```
+sudo docker pull ubuntu:12.04
+```
+![docker_pull](https://github.com/swordrain/docker-notes/blob/master/image/docker_pull.png)  
+拉取完后查看  
+![docker_images_update](https://github.com/swordrain/docker-notes/blob/master/image/docker_images_update.png)  
+`:12.04`是镜像的标签tag  
+
+Docker Hub里有两种类型仓库，用户仓库和顶层仓库。顶层仓库由Docker内部管理。  
+用户仓库命名由用户名和仓库名组成，如swordrain/first
+
+###拉取镜像
+在`docker run`启动镜像时，如果不存在，会从Docker Hub上下载，如果没有指定具体标签，会自动下载latest标签的镜像。
+![docker_pull_result](https://github.com/swordrain/docker-notes/blob/master/image/docker_pull_result.png)  
+
+###查找镜像
+使用`sudo docker search keyword`
+
+###构建镜像
+使用`docker commit`命令  
+使用`docker build`命令和`Dockerfile`文件  
+
+####登陆到Docker Hub  
+```
+sudo docker login
+```
+![docker_login](https://github.com/swordrain/docker-notes/blob/master/image/docker_login.png)  
+
+####用commit命令创建镜像
+```
+#创建新容器
+sudo docker run --name lianli_commit -i -t ubuntu /bin/bash
+#修改容器
+mkdir test
+#退出
+exit
+#提交
+sudo docker commit lianli_commit swordrain/new
+#检查镜像
+sudo docker images swordrain/new
+#新的提交，有信息，作者和标签
+sudo docker commit -m "A new custom image" -a "swordrain" lianli_commit swordrain/new:anotherNew
+```
+![docker_commit](https://github.com/swordrain/docker-notes/blob/master/image/docker_commit.png)  
+查看镜像的详细信息
+![docker_image_detail](https://github.com/swordrain/docker-notes/blob/master/image/docker_image_detail.png)  
+运行新提交的镜像
+![docker_run_new_commit](https://github.com/swordrain/docker-notes/blob/master/image/docker_run_new_commit.png)  
+
+####用Dockerfile构建镜像
+
