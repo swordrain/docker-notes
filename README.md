@@ -52,9 +52,9 @@ WARNING: No swap limit support
 ![Kitematic](https://github.com/swordrain/docker-notes/blob/master/image/kitematic.png)  
 Toolbox本质是通过一个微型的Linux虚拟机来运行Docker  
 启动之后，能在virtualbox中看到一个运行中名为default的虚拟机
-![Kitematic](https://github.com/swordrain/docker-notes/blob/master/image/virtual_box_default.png)  
+![default](https://github.com/swordrain/docker-notes/blob/master/image/virtual_box_default.png)  
 显示该虚拟机  
-![Kitematic](https://github.com/swordrain/docker-notes/blob/master/image/docker_toolbox_show.png)  
+![show](https://github.com/swordrain/docker-notes/blob/master/image/docker_toolbox_show.png)  
 
 如果已经有virtual box和git bash，可以不安装，但注意最后生成的快捷方式可能不是已经安装的git bash的路径，而是以Docker Toolbox程序文件夹下的git bash作为启动入口。
 
@@ -111,10 +111,44 @@ sudo docker daemon -D
 
 ###Docker就绪
 `sudo docker info`返回Docker的信息  
-Docker是基于CS构架的，有一个docker程序，既能作为客户端也能作为服务器端。作为客户端，docker想Docker守护进程发送请求，再对返回的请求结果进行处理。
+Docker是基于CS构架的，有一个docker程序，既能作为客户端也能作为服务器端。作为客户端，docker想Docker守护进程发送请求，再对返回的请求结果进行处理。  
+![docker_info](https://github.com/swordrain/docker-notes/blob/master/image/docker_info.png)  
+可以确定docker daemon守护进程是否运行  
 
 ###运行第一个容器
-运行命令`sudo docker run -i -t ubuntu /bin/bash`
+运行命令`sudo docker run -i -t ubuntu /bin/bash`  
+![docker_run](https://github.com/swordrain/docker-notes/blob/master/image/docker_run.png)   
+`-i`标志保证容器中STDIN开启  
+`-t`告诉Docker为要创建的容器分配一个伪tty终端，若要在命令行总创建一个交互的容器，而不是一个后台服务的容器，这两个参数是基本的  
+Docker会先检查本地是否有ubuntu镜像，如果没有，就去Docker Hub Registry下载。  
+容器创建完毕后，就执行容器的`/bin/bash`命令，进入容器的shell。  
+
+###使用第一个容器
+可以在启动的容器中运行各种命令  
+![docker_command](https://github.com/swordrain/docker-notes/blob/master/image/docker_command.png)   
+输入`exit`可以结束docker容器运行，并退回到宿主机。  
+使用`sudo docker ps -a`查看当前容器列表  
+![docker_ps](https://github.com/swordrain/docker-notes/blob/master/image/docker_ps.png)   
+如果不带参数`-a`，只能看到正在运行的容器。  
+
+###容器命名
+使用参数`--name`  
+![docker_name](https://github.com/swordrain/docker-notes/blob/master/image/docker_name.png)  
+容器的命名必须唯一，如果试图创建两个名称相同的容器会失败。如果要使用的容器名称已经存在，可以先用`docker rm`命令删除已有的同名容器，再创建。  
+
+###重新启动已停止的容器
+使用`docker start`命令启动已经停止的容器，可以指定名称或者id  
+![docker_start](https://github.com/swordrain/docker-notes/blob/master/image/docker_start.png)
+
+###attach到容器上
+如果想在`docker start`启动的容器启动后打开shell，可以使用`docker attach`命令。
+![docker_attach](https://github.com/swordrain/docker-notes/blob/master/image/docker_attach.png)  
+注意，启动完后在terminal可能是空白，此时随意按下键盘即可让其显示。  
+同样即可以指定名称，也可以指定id。  
+
+###创建守护式容器
+
+
 
 
 
