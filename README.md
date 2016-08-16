@@ -147,9 +147,75 @@ Docker会先检查本地是否有ubuntu镜像，如果没有，就去Docker Hub 
 同样即可以指定名称，也可以指定id。  
 
 ###创建守护式容器
+```
+sudo docker run --name daemon_lianli -d ubuntu /bin/bash -c "while true; do echo hello world; sleep 1; done"
+```
+使用了`-d`参数使容器在后台运行。
+![docker_daemon](https://github.com/swordrain/docker-notes/blob/master/image/docker_daemon.png)  
 
+###查看日志
+```
+sudo docker logs daemon_lianli
+```
+![docker_logs](https://github.com/swordrain/docker-notes/blob/master/image/docker_logs.png)  
+也可以带上一些参数  
+![docker_logs_parameter](https://github.com/swordrain/docker-notes/blob/master/image/docker_logs_parameter.png)  
 
+###Docker日志驱动
+用`--log-driver`控制Docker守护进程和容器所用的日志驱动，默认是`json-file`。如果用`syslog`会禁用`docker logs`命令，并将所有容器的日志输出重定向到Syslog。
+```
+sudo docker run --log-driver="syslog" --name daemon-lianli2 -d ubuntu /bin/sh -c "while true; do echo hello world; sleep 1; done"
+```
+查看logs  
+```
+lianli@lianli-VirtualBox:~$ sudo docker logs daemon_lianli2
+"logs" command is supported only for "json-file" and "journald" logging drivers (got: syslog)
+```
+选用`none`会禁用所有容器日志。  
 
+###查看容器内进程
+```
+sudo docker top daemon_lianli2
+```
+![docker_top](https://github.com/swordrain/docker-notes/blob/master/image/docker_top.png)  
 
+###Docker统计信息
+```
+sudo docker stats daemon_lianli2 daemon_lianli
+```
+![docker_stats](https://github.com/swordrain/docker-notes/blob/master/image/docker_stats.png)  
 
+###在容器内部运行进程
+通过`docker exec`命令在容器内额外启动新进程，可以是后台任务也可以是交互式任务
+```
+sudo docker exec -d daemon_lianli2 touch /etc/new_config_file
+sudo docker exec -t -i daemon_dave /bin/bash
+```
+![docker_exec](https://github.com/swordrain/docker-notes/blob/master/image/docker_exec.png)  
 
+###停止守护式容器
+还是使用`docker stop`命令
+
+###自动重启容器
+带上`--restart`，可以设置`always`，`on-failure`。当容器的退出代码为非0时，才会自动重启，可以指定次数如`--restart=on-failure:5`  
+```
+sudo docker run --restart=always --name daemon_lianli -d ubuntu /bin/sh -c "while true; do echo hello worldl sleep 1; done;"
+```
+
+###深入容器
+```
+sudo docker inspect lianli_ubuntu
+```
+![docker_inspect](https://github.com/swordrain/docker-notes/blob/master/image/docker_inspect.png)  
+带上参数`-f`或`--format`查看选定结果  
+![docker_inspect_parameter](https://github.com/swordrain/docker-notes/blob/master/image/docker_inspect_parameter.png)  
+
+###删除容器
+使用`docker rm`命令  
+![docker_rm](https://github.com/swordrain/docker-notes/blob/master/image/docker_rm.png)  
+删除所有容器
+```
+sudo docker rm `sudo docker ps -a -q`
+```
+
+##使用Docker镜像和仓库
