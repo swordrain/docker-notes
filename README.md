@@ -279,8 +279,10 @@ sudo docker login
 ```
 #创建新容器
 sudo docker run --name lianli_commit -i -t ubuntu /bin/bash
-#修改容器
-mkdir test
+#更新
+apt-get update
+#安装
+apt-get install apache2
 #退出
 exit
 #提交
@@ -297,4 +299,57 @@ sudo docker commit -m "A new custom image" -a "swordrain" lianli_commit swordrai
 ![docker_run_new_commit](https://github.com/swordrain/docker-notes/blob/master/image/docker_run_new_commit.png)  
 
 ####用Dockerfile构建镜像
+准备  
+```
+mkdir static_web
+cd static_web
+touch Dockerfile
+```
+`static_web`目录就是构建环境，Docker称此环境为上下文context或者构建上下文build context。
+Dockerfile内容  
+```
+# Version: 0.0.1
+FROM ubuntu:14.04
+MAINTAINER swordrain "lianlitongji2002@163.com"
+#参数不可少，不然执行到询问yes/no的时候默认是abort
+RUN apt-get -yqq update && apt-get install -y nginx
+RUN echo 'Hi, I am in your container' > /usr/share/nginx/html/index.html
+EXPOSE 80
+```
+*  Docker从基础镜像运行一个容器
+*  执行一条指令，对容器修改
+*  执行类似docker commit的操作，提交一个新的镜像层
+*  Docker再基于刚提交的镜像运行一个新容器
+*  执行Dockerfile下一条指令，直到全部执行完毕
 
+第一条指令必须是`FROM`，指定已经存在的基础镜像  
+`MAINTAINER`标志所有者和联系方式  
+默认`RUN`会在shell里使用命令包装器`/bin/sh -c`来执行。如果在不支持shell的平台或者不希望在shell中运行，可以使用`exec`格式的`RUN`指令
+```
+RUN ["apt-get", "install", "-y", "nginx"]
+```
+`EXPOSE`指令告诉Docker容器内的应用程序会使用容器的指定端口，Docker不会自动打开该端口，而是需要在使用`docker run`运行容器时来指定打开那些端口，也可以公开多个端口。  
+
+####基于Dockerfile构建新镜像
+```
+#别少了最后的. 从当前目录寻找Dockerfile文件
+sudo docker buold -t="swordrain/static_web" .
+```
+
+`-t`用来指定仓库和名称，也可以带上标签，如`sudo docker build -t="swordrain/static_web:v1" .`  
+也可以指定从git仓库构建`sudo docker build -t="swordrain/static_web:v1" git@github.com:swordrain/docker-stattic_web`  
+
+每一步都会有构建缓存，指令如果失败，如果重复执行，会直接基于之前正确构建的镜像缓存继续往下执行。  
+可以基于中间某一步成功的步骤创建新容器
+```
+sudo docker run -t -i ff6011336327 /bin/bash
+```
+想要禁用缓存，使用`--no-cache`  
+```
+sudo docker build --nochche -t="swordrain/static_web" .
+```
+
+构建结果  
+![docker_build_result](https://github.com/swordrain/docker-notes/blob/master/image/docker_build_result.png)  
+使用`docker history`查看构建历史  
+![docker_build_hisotry](https://github.com/swordrain/docker-notes/blob/master/image/docker_build_history.png)  
