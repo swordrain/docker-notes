@@ -353,3 +353,49 @@ sudo docker build --nochche -t="swordrain/static_web" .
 ![docker_build_result](https://github.com/swordrain/docker-notes/blob/master/image/docker_build_result.png)  
 使用`docker history`查看构建历史  
 ![docker_build_hisotry](https://github.com/swordrain/docker-notes/blob/master/image/docker_build_history.png)  
+
+####从新镜像启动容器
+```
+sudo docker run -d -p 80 --name static_web swordrain/static_web nginx -g "daemon off;"
+```
+`-p`用来控制容器暴露给宿主机的端口，不指定的话随机在32768~61000中选择  
+使用`sudo docker ps -l`查看端口映射
+![port_mapping](https://github.com/swordrain/docker-notes/blob/master/image/port_mapping.png)  
+使用`sudo docker port static_web port`查看映射情况  
+![port_mapping2](https://github.com/swordrain/docker-notes/blob/master/image/port_mapping2.png)  
+
+如果要绑定指定的端口或网络接口  
+```
+#将容器的80端口绑定到宿主机的8080端口
+sudo docker run -d -p 8080:80 --name static_web swordrain/static_web nginx -g "daemon off;"
+#绑定到宿主机的127.0.0.1IP的80端口上
+sudo docker run -d -p 127.0.0.1:80:80 --name static_web swordrain/static_web nginx -g "daemon off;"
+#绑定到宿主机的ip随机的端口
+sudo docker run -d -p 127.0.0.1::80 --name static_web swordrain/static_web nginx -g "daemon off;"
+```
+如果使用`-P`表明使用Dockerfile中通过EXPOSE公开的所有端口到宿主机的随机端口
+
+现在在宿主机上查看运行情况  
+![port_mapping_result](https://github.com/swordrain/docker-notes/blob/master/image/port_mapping_result.png)  
+
+####Dockerfile指令
+**CMD**  
+`CMD`用于指定容器启动时要运行的命令，类似于`RUN`。只是`RUN`指定镜像被构建时要运行的命令，`CMD`指定容器被启动时要运行的命令。和使用`docker run`命令启动容器时指定要运行的命令类似。  
+```
+#以下两个命令作用相同
+sudo docker run -i -t swordrain/static_web /bin/true
+CMD ["/bin/true"]
+#也可以传递参数
+CMD ["/bin/bash", "-l"]
+```
+`docker run`命令可以覆盖`CMD`指令。
+```
+CMD ["/bin/bash"]
+#未指定命令，使用CMD指令中指定的命令
+sudo docker run -t -i swordrain/test
+#指定了命令，使用ps命令
+sudo docker run -t -i swordrain/test /bin/ps
+```
+
+**ENTRYPOINT**
+`ENTRYPOINT`指定的命令不容易在启动容器时被覆盖。`docker run`命令行中指定的任何参数都会被当做参数再次传递给`ENTRYPOINT`指令中指定的命令。
