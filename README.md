@@ -396,6 +396,85 @@ sudo docker run -t -i swordrain/test
 #指定了命令，使用ps命令
 sudo docker run -t -i swordrain/test /bin/ps
 ```
+Dockerfile中只能指定一条`CMD`指令，如果指定了多条，以最后一条为准
 
 **ENTRYPOINT**
 `ENTRYPOINT`指定的命令不容易在启动容器时被覆盖。`docker run`命令行中指定的任何参数都会被当做参数再次传递给`ENTRYPOINT`指令中指定的命令。
+```
+ENTRYPOINT ["/usr/sbin/nginx"]
+
+ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
+```
+如果启动  
+```
+sudo docker run -t -i swordrain/static_web -g "daemon off;"
+```
+`-g "deamon off;"`会被传递给用`ENTRYPOINT`指定的指令。  
+也可以同时使用`ENTRYPOINT`和`CMD`来配合
+```
+ENTRYPOINT ["/usr/sbin/nginx"]
+CMD ["-h"]
+```
+此时启动容器，如果`docker run`命令行有参数，则被传递给Nginx守护进程，如果没有参数，则`CMD`指令中的`-h`被传递给Nginx守护进程。  
+`docker run`的`--entrypoint`标志可以覆盖`ENTRYPOINT`指令  
+
+**WORKDIR**
+用来从镜像创建一个新容器时，在容器内部设置一个工作目录，`ENTRYPOINT`和`/`或`CMD`指定的程序会在这个目录下执行  
+```
+WORKDIR /opt/webapp/db
+RUN bundle install
+WORKDIR /opt/webapp
+ENTRYPOINT [ "rackup" ]
+```
+`docker run`的`-w`标志可以覆盖该指令
+
+**ENV**
+在镜像构建过程中设置环境变量，这个环境变量可以在后续的`RUN`中使用，环境变量被被创建的容器持久保存      
+```
+ENV RVM_PATH /home/rvm
+#多个
+ENV RVM_PATH=/home/rvm RVM_ARCHFLAGS="-arch i386"
+```
+`docker run`的`-e`标志可以覆盖该指令  
+
+**USER**
+指定镜像会以什么样的用户去运行
+```
+USER user
+USER user:group
+USER uid
+USER uid:gid
+USER user:gid
+USER uid:group
+```
+`docker run`的`-u`标志可以覆盖该指令  
+
+**VOLUME**
+用来向基于镜像创建的容器添加卷。一个卷是可以存在于一个或多个容器内的特定的目录，这个目录可以绕过联合文件系统，并提供如下共享数据或者对数据进行持久化的功能  
+* 卷可以在容器间共享和重用
+* 一个容器可以不是必须和其他容器共享卷
+* 对卷的修改是可以立时生效的
+* 对卷的修改不会对更新镜像产生影响
+* 卷会一直存在直到没有任何容器再使用它
+ 卷功能让我们可以将数据（如源码）、数据库或其他内容添加到镜像而不是将这些内容提交到镜像中，并且允许我们在多个容器间共享这些内容。我们可以利用此功能来测试容器和内部的应用程序代码，管理日志，或者处理容器内部的数据库。
+```
+VOLUMN ["/opt/project"]
+VOLUMN ["/opt/project", "/data"]
+```
+
+**ADD**
+用来将构建环境下的文件和目录复制到镜像中
+```
+ADD software.lic /opt/application/software.lic
+ADD http://wordpress.org/latest.zip /root/wordpress.zip
+```
+目的地址末尾的字符是否是`/`决定了是目录还是文件  
+如果将一个归档文件指定为源文件，在目的地址中会自动解开  
+如果目的地址不存在，Docker会自动创建这个路径，目录和文件的模式为0755，UID和GID都是0
+
+**COPY**
+类似于`ADD`，`COPY`只关心在构建上下文中复制文件，不会去做文件提取和解压的工作  
+```
+COPY conf.d/ /etc/appache2/
+```
+
