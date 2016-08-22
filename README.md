@@ -544,3 +544,88 @@ sudo docker rmi `docker images -a -q`
 ```
 
 ###运行自己的Docker Registry
+
+
+##在测试中使用Docker
+###使用Docker测试静态网站
+```
+mkdir sample
+cd sample
+touch Dockerfile
+```
+```
+#获取Nginx配置文件
+mkdir nginx && cd nginx
+wget https://raw.githubusercontent.com/jamtur01/dockerbook-code/master/code/5/sample/nginx/global.conf
+wget https://raw.githubusercontent.com/jamtur01/dockerbook-code/master/code/5/sample/nginx/nginx.conf
+cd ..
+```
+```
+#Dockerfile
+FROM ubuntu:14.04
+MAINTAINER swordrain "lianlitongji2002@163.com"
+ENV REFRESHED_AT 2016-08-22
+RUN apt-get -yqq update && apt-get -yqq install nginx
+RUN mkdir -p /var/www/html/website
+ADD nginx/global.conf /etc/nginx/conf.d
+ADD nginx/nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
+```
+```
+#global.conf
+server {
+        listen          0.0.0.0:80;
+        server_name     _;
+
+        root            /var/www/html/website;
+        index           index.html index.htm;
+
+        access_log      /var/log/nginx/default_access.log;
+        error_log       /var/log/nginx/default_error.log;
+}
+```
+```
+#nginx.conf
+user www-data;
+worker_processes 4;
+pid /run/nginx.pid;
+daemon off;
+
+events {  }
+
+http {
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+  keepalive_timeout 65;
+  types_hash_max_size 2048;
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log;
+  gzip on;
+  gzip_disable "msie6";
+  include /etc/nginx/conf.d/*.conf;
+}
+```
+开始构建`sudo docker build -t swordrain/nginx .`  
+显示构建历史`sudo docker history swordrain/nginx`  
+![nginx_build_history](https://github.com/swordrain/docker-notes/blob/master/image/nginx_build_history.png)  
+
+下载网站  
+```
+mkdir website && cd website
+wget https://raw.githubusercontent.com/jamtur01/dockerbook-code/master/code/5/sample/website/index.html
+cd ..
+```
+运行  
+```
+sudo docker run -d -p 80 --name website -v $PWD/website:/var/www/html/website swordrain/nginx nginx
+```
+查看一下端口映射`sudo docker ps -l`  
+在宿主机上打开映射的端口  
+![nginx_result](https://github.com/swordrain/docker-notes/blob/master/image/nginx_result.png)  
+打开宿主机上`website`目录下的`index.html`文件修改，再次浏览查看结果  
+![nginx_result2](https://github.com/swordrain/docker-notes/blob/master/image/nginx_result2.png)   
+
+
