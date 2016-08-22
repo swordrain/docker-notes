@@ -478,3 +478,69 @@ ADD http://wordpress.org/latest.zip /root/wordpress.zip
 COPY conf.d/ /etc/appache2/
 ```
 
+**LABEL**
+为Docker镜像添加元数据。元数据以键值对的形式展现  
+```
+LABEL version="1.0"
+LABEL locatio="New York" type="Data Center" role="Web Server"
+```
+通过`sudo docker inspect`可以查看LABEL
+
+**STOPSINGAL**
+用来设置停止容器时发送什么系统调用信号给容器  
+
+**ARG**
+用来定义在`docker build`命令运行时传递给构建运行时的变量，然后在构建时使用`--build-arg`标志即可。
+```
+ARG build
+ARG webapp_user=user
+```
+```
+sudo docker build --build-arg build=1234 -t swordrain/webapp .
+```
+Docker预定义了一组`ARG`变量
+```
+ HTTP_PROXY
+ http_proxy
+ HTTPS_PROXY
+ https_proxy
+ FTP_PROXY
+ ftp_proxy
+ NO_PROXY
+ no_proxy
+```
+
+**ONBUILD**
+为镜像添加触发器。当一个镜像被用作其他镜像的基础镜像时，触发器被执行  
+触发器会在构建过程中插入新指令，紧跟在`FROM`之后  
+```
+ONBUILD ADD . /app/src
+ONBUILD RUN cd /app/src && make
+```
+也可以通过`docker inspect`来查看已设置的ONBUILD
+
+###将镜像推送到Docker Hub
+先要通过`docker login`登陆到Docker Hub  
+然后执行
+```
+sudo docker push swordrain/static_web
+```
+![docker_push](https://github.com/swordrain/docker-notes/blob/master/image/docker_push.png)  
+![docker_push_result](https://github.com/swordrain/docker-notes/blob/master/image/docker_push_result.png)  
+
+**自动构建**
+Docker Hub可以链接GitHub或BitBucker中的Dockerfile文件，像这个代码仓库提交代码时，会触发一次镜像构建活动并创建一个新镜像  
+![automatic_build](https://github.com/swordrain/docker-notes/blob/master/image/automatic_build.png)  
+
+###删除镜像
+```
+sudo docker rmi swordrain/static_web
+sudo docker rmi swordrain/static_web swordrain/puppetmaster
+```
+此时删除的仅是本地镜像  
+删除所有镜像  
+```
+sudo docker rmi `docker images -a -q`
+```
+
+###运行自己的Docker Registry
