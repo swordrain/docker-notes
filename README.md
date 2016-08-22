@@ -528,7 +528,7 @@ sudo docker push swordrain/static_web
 ![docker_push](https://github.com/swordrain/docker-notes/blob/master/image/docker_push.png)  
 ![docker_push_result](https://github.com/swordrain/docker-notes/blob/master/image/docker_push_result.png)  
 
-**自动构建**
+**自动构建**  
 Docker Hub可以链接GitHub或BitBucker中的Dockerfile文件，像这个代码仓库提交代码时，会触发一次镜像构建活动并创建一个新镜像  
 ![automatic_build](https://github.com/swordrain/docker-notes/blob/master/image/automatic_build.png)  
 
