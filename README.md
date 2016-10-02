@@ -379,6 +379,17 @@ sudo docker run -d -p 127.0.0.1::80 --name static_web swordrain/static_web nginx
 ![port_mapping_result](https://github.com/swordrain/docker-notes/blob/master/image/port_mapping_result.png)  
 
 ####Dockerfile指令
+**.dockerignore**
+遵循Go语言规则
+```
+example/hello.txt
+example/*.cpp
+wo*
+*.cpp
+.git
+.svn
+```
+
 **CMD**  
 `CMD`用于指定容器启动时要运行的命令，类似于`RUN`。只是`RUN`指定镜像被构建时要运行的命令，`CMD`指定容器被启动时要运行的命令。和使用`docker run`命令启动容器时指定要运行的命令类似。  
 ```
@@ -628,4 +639,6 @@ sudo docker run -d -p 80 --name website -v $PWD/website:/var/www/html/website sw
 打开宿主机上`website`目录下的`index.html`文件修改，再次浏览查看结果  
 ![nginx_result2](https://github.com/swordrain/docker-notes/blob/master/image/nginx_result2.png)   
 
+##Docker监控##
+Graphite，可以将Carbon, Graphite Web, Crafana, Elasticsearch, Diamone组合到Graphite，并用Docker容器运行。
 
