@@ -1,9 +1,9 @@
 ## 简介
 blablabla...
 
-##安装Docker
+## 安装Docker
 
-###安装
+### 安装
 使用Ubuntu Kylin 16.04可以直接通过软件源安装
 ```
 sudo apt-get install docker.io
@@ -102,20 +102,20 @@ sudo docker daemon -D
 使用`sudo stop docker`或`sudo service docker stop`来停止docker  
 使用`sudo start docker`或`sudo service docker start`来启动
 
-###Docker用户界面  
+### Docker用户界面  
 *  Shipyard
 *  DockerUI
 *  Kitematic
 
-##Docker入门
+## Docker入门
 
-###Docker就绪
+### Docker就绪
 `sudo docker info`返回Docker的信息  
 Docker是基于CS构架的，有一个docker程序，既能作为客户端也能作为服务器端。作为客户端，docker想Docker守护进程发送请求，再对返回的请求结果进行处理。  
 ![docker_info](https://github.com/swordrain/docker-notes/blob/master/image/docker_info.png)  
 可以确定docker daemon守护进程是否运行  
 
-###运行第一个容器
+### 运行第一个容器
 运行命令`sudo docker run -i -t ubuntu /bin/bash`  
 ![docker_run](https://github.com/swordrain/docker-notes/blob/master/image/docker_run.png)   
 `-i`标志保证容器中STDIN开启  
@@ -123,7 +123,7 @@ Docker是基于CS构架的，有一个docker程序，既能作为客户端也能
 Docker会先检查本地是否有ubuntu镜像，如果没有，就去Docker Hub Registry下载。  
 容器创建完毕后，就执行容器的`/bin/bash`命令，进入容器的shell。  
 
-###使用第一个容器
+### 使用第一个容器
 可以在启动的容器中运行各种命令  
 ![docker_command](https://github.com/swordrain/docker-notes/blob/master/image/docker_command.png)   
 输入`exit`可以结束docker容器运行，并退回到宿主机。  
@@ -131,29 +131,29 @@ Docker会先检查本地是否有ubuntu镜像，如果没有，就去Docker Hub 
 ![docker_ps](https://github.com/swordrain/docker-notes/blob/master/image/docker_ps.png)   
 如果不带参数`-a`，只能看到正在运行的容器。  
 
-###容器命名
+### 容器命名
 使用参数`--name`  
 ![docker_name](https://github.com/swordrain/docker-notes/blob/master/image/docker_name.png)  
 容器的命名必须唯一，如果试图创建两个名称相同的容器会失败。如果要使用的容器名称已经存在，可以先用`docker rm`命令删除已有的同名容器，再创建。  
 
-###重新启动已停止的容器
+### 重新启动已停止的容器
 使用`docker start`命令启动已经停止的容器，可以指定名称或者id  
 ![docker_start](https://github.com/swordrain/docker-notes/blob/master/image/docker_start.png)
 
-###attach到容器上
+### attach到容器上
 如果想在`docker start`启动的容器启动后打开shell，可以使用`docker attach`命令。
 ![docker_attach](https://github.com/swordrain/docker-notes/blob/master/image/docker_attach.png)  
 注意，启动完后在terminal可能是空白，此时随意按下键盘即可让其显示。  
 同样即可以指定名称，也可以指定id。  
 
-###创建守护式容器
+### 创建守护式容器
 ```
 sudo docker run --name daemon_lianli -d ubuntu /bin/bash -c "while true; do echo hello world; sleep 1; done"
 ```
 使用了`-d`参数使容器在后台运行。
 ![docker_daemon](https://github.com/swordrain/docker-notes/blob/master/image/docker_daemon.png)  
 
-###查看日志
+### 查看日志
 ```
 sudo docker logs daemon_lianli
 ```
@@ -161,7 +161,7 @@ sudo docker logs daemon_lianli
 也可以带上一些参数  
 ![docker_logs_parameter](https://github.com/swordrain/docker-notes/blob/master/image/docker_logs_parameter.png)  
 
-###Docker日志驱动
+### Docker日志驱动
 用`--log-driver`控制Docker守护进程和容器所用的日志驱动，默认是`json-file`。如果用`syslog`会禁用`docker logs`命令，并将所有容器的日志输出重定向到Syslog。
 ```
 sudo docker run --log-driver="syslog" --name daemon-lianli2 -d ubuntu /bin/sh -c "while true; do echo hello world; sleep 1; done"
@@ -173,19 +173,19 @@ lianli@lianli-VirtualBox:~$ sudo docker logs daemon_lianli2
 ```
 选用`none`会禁用所有容器日志。  
 
-###查看容器内进程
+### 查看容器内进程
 ```
 sudo docker top daemon_lianli2
 ```
 ![docker_top](https://github.com/swordrain/docker-notes/blob/master/image/docker_top.png)  
 
-###Docker统计信息
+### Docker统计信息
 ```
 sudo docker stats daemon_lianli2 daemon_lianli
 ```
 ![docker_stats](https://github.com/swordrain/docker-notes/blob/master/image/docker_stats.png)  
 
-###在容器内部运行进程
+### 在容器内部运行进程
 通过`docker exec`命令在容器内额外启动新进程，可以是后台任务也可以是交互式任务
 ```
 sudo docker exec -d daemon_lianli2 touch /etc/new_config_file
@@ -193,16 +193,16 @@ sudo docker exec -t -i daemon_dave /bin/bash
 ```
 ![docker_exec](https://github.com/swordrain/docker-notes/blob/master/image/docker_exec.png)  
 
-###停止守护式容器
+### 停止守护式容器
 还是使用`docker stop`命令
 
-###自动重启容器
+### 自动重启容器
 带上`--restart`，可以设置`always`，`on-failure`。当容器的退出代码为非0时，才会自动重启，可以指定次数如`--restart=on-failure:5`  
 ```
 sudo docker run --restart=always --name daemon_lianli -d ubuntu /bin/sh -c "while true; do echo hello worldl sleep 1; done;"
 ```
 
-###深入容器
+### 深入容器
 ```
 sudo docker inspect lianli_ubuntu
 ```
@@ -210,7 +210,7 @@ sudo docker inspect lianli_ubuntu
 带上参数`-f`或`--format`查看选定结果  
 ![docker_inspect_parameter](https://github.com/swordrain/docker-notes/blob/master/image/docker_inspect_parameter.png)  
 
-###删除容器
+### 删除容器
 使用`docker rm`命令  
 ![docker_rm](https://github.com/swordrain/docker-notes/blob/master/image/docker_rm.png)  
 删除所有容器
@@ -218,8 +218,8 @@ sudo docker inspect lianli_ubuntu
 sudo docker rm `sudo docker ps -a -q`
 ```
 
-##使用Docker镜像和仓库
-###什么是Docker镜像
+## 使用Docker镜像和仓库
+### 什么是Docker镜像
 Docker镜像由文件系统叠加而成。最底端是一个引导文件系统即bootfs。当容器启动时，会移到内存中，引导文件系统被卸载以留出更多的内存供initrd磁盘镜像使用。  
 Docker镜像第二层是root文件系统rootfs，位于引导文件系统之上。在Docker里，root文件系统永远只能只读。Docker利用union mount技术在root文件系统层上加载更多的只读文件系统。union mount指一次同时加载多个文件系统，但在外面看到只能看到一个文件系统。它将各层文件系统叠加到一起，最终的文件系统包含所有底层的文件和目录。
 Docker将这样的文件系统称之为镜像。一个镜像可以放到另一个镜像的顶部。位于下面的镜像称为parent image，最底部的称为base image。最后当从一个镜像启动容器时，Docker会在该镜像的最顶层加载一个读写文件系统。 
@@ -238,7 +238,7 @@ Docker将这样的文件系统称之为镜像。一个镜像可以放到另一�
 
 当Docker第一次启动一个容器时，初始的读写层是空的。当文件系统发生改变时，这些变化都会应用到这一层上。这种机制称为copy on write。每个只读镜像层都是只读的，并且以后永远不会变化。当创建一个新容器时，Docker会构建出一个镜像栈，在栈的最顶端添加一个读写层。这个读写层再加上其下面的镜像层以及一些配置数据就构成了一个容器。  
 
-###列出镜像
+### 列出镜像
 ```
 sudo docker images
 ```
@@ -258,24 +258,24 @@ sudo docker pull ubuntu:12.04
 Docker Hub里有两种类型仓库，用户仓库和顶层仓库。顶层仓库由Docker内部管理。  
 用户仓库命名由用户名和仓库名组成，如swordrain/first
 
-###拉取镜像
+### 拉取镜像
 在`docker run`启动镜像时，如果不存在，会从Docker Hub上下载，如果没有指定具体标签，会自动下载latest标签的镜像。
 ![docker_pull_result](https://github.com/swordrain/docker-notes/blob/master/image/docker_pull_result.png)  
 
-###查找镜像
+### 查找镜像
 使用`sudo docker search keyword`
 
-###构建镜像
+### 构建镜像
 使用`docker commit`命令  
 使用`docker build`命令和`Dockerfile`文件  
 
-####登陆到Docker Hub  
+#### 登陆到Docker Hub  
 ```
 sudo docker login
 ```
 ![docker_login](https://github.com/swordrain/docker-notes/blob/master/image/docker_login.png)  
 
-####用commit命令创建镜像
+#### 用commit命令创建镜像
 ```
 #创建新容器
 sudo docker run --name lianli_commit -i -t ubuntu /bin/bash
@@ -298,7 +298,7 @@ sudo docker commit -m "A new custom image" -a "swordrain" lianli_commit swordrai
 运行新提交的镜像
 ![docker_run_new_commit](https://github.com/swordrain/docker-notes/blob/master/image/docker_run_new_commit.png)  
 
-####用Dockerfile构建镜像
+#### 用Dockerfile构建镜像
 准备  
 ```
 mkdir static_web
@@ -330,7 +330,7 @@ RUN ["apt-get", "install", "-y", "nginx"]
 ```
 `EXPOSE`指令告诉Docker容器内的应用程序会使用容器的指定端口，Docker不会自动打开该端口，而是需要在使用`docker run`运行容器时来指定打开那些端口，也可以公开多个端口。  
 
-####基于Dockerfile构建新镜像
+#### 基于Dockerfile构建新镜像
 ```
 #别少了最后的. 从当前目录寻找Dockerfile文件
 sudo docker buold -t="swordrain/static_web" .
@@ -354,7 +354,7 @@ sudo docker build --nochche -t="swordrain/static_web" .
 使用`docker history`查看构建历史  
 ![docker_build_hisotry](https://github.com/swordrain/docker-notes/blob/master/image/docker_build_history.png)  
 
-####从新镜像启动容器
+#### 从新镜像启动容器
 ```
 sudo docker run -d -p 80 --name static_web swordrain/static_web nginx -g "daemon off;"
 ```
@@ -378,7 +378,7 @@ sudo docker run -d -p 127.0.0.1::80 --name static_web swordrain/static_web nginx
 现在在宿主机上查看运行情况  
 ![port_mapping_result](https://github.com/swordrain/docker-notes/blob/master/image/port_mapping_result.png)  
 
-####Dockerfile指令
+#### Dockerfile指令
 **.dockerignore**
 遵循Go语言规则
 ```
@@ -530,7 +530,7 @@ ONBUILD RUN cd /app/src && make
 ```
 也可以通过`docker inspect`来查看已设置的ONBUILD
 
-###将镜像推送到Docker Hub
+### 将镜像推送到Docker Hub
 先要通过`docker login`登陆到Docker Hub  
 然后执行
 ```
@@ -543,7 +543,7 @@ sudo docker push swordrain/static_web
 Docker Hub可以链接GitHub或BitBucker中的Dockerfile文件，像这个代码仓库提交代码时，会触发一次镜像构建活动并创建一个新镜像  
 ![automatic_build](https://github.com/swordrain/docker-notes/blob/master/image/automatic_build.png)  
 
-###删除镜像
+### 删除镜像
 ```
 sudo docker rmi swordrain/static_web
 sudo docker rmi swordrain/static_web swordrain/puppetmaster
@@ -554,11 +554,11 @@ sudo docker rmi swordrain/static_web swordrain/puppetmaster
 sudo docker rmi `docker images -a -q`
 ```
 
-###运行自己的Docker Registry
+### 运行自己的Docker Registry
 
 
-##在测试中使用Docker
-###使用Docker测试静态网站
+## 在测试中使用Docker
+### 使用Docker测试静态网站
 ```
 mkdir sample
 cd sample
@@ -639,6 +639,6 @@ sudo docker run -d -p 80 --name website -v $PWD/website:/var/www/html/website sw
 打开宿主机上`website`目录下的`index.html`文件修改，再次浏览查看结果  
 ![nginx_result2](https://github.com/swordrain/docker-notes/blob/master/image/nginx_result2.png)   
 
-##Docker监控##
+## Docker监控##
 Graphite，可以将Carbon, Graphite Web, Crafana, Elasticsearch, Diamone组合到Graphite，并用Docker容器运行。
 
