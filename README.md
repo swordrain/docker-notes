@@ -295,7 +295,7 @@ sudo docker commit -m "A new custom image" -a "swordrain" lianli_commit swordrai
 ![docker_commit](https://github.com/swordrain/docker-notes/blob/master/image/docker_commit.png)  
 查看镜像的详细信息
 ![docker_image_detail](https://github.com/swordrain/docker-notes/blob/master/image/docker_image_detail.png)  
-运行新提交的镜像
+运行新提交的镜像  
 ![docker_run_new_commit](https://github.com/swordrain/docker-notes/blob/master/image/docker_run_new_commit.png)  
 
 #### 用Dockerfile构建镜像
@@ -639,6 +639,6 @@ sudo docker run -d -p 80 --name website -v $PWD/website:/var/www/html/website sw
 打开宿主机上`website`目录下的`index.html`文件修改，再次浏览查看结果  
 ![nginx_result2](https://github.com/swordrain/docker-notes/blob/master/image/nginx_result2.png)   
 
-## Docker监控##
+## Docker监控
 Graphite，可以将Carbon, Graphite Web, Crafana, Elasticsearch, Diamone组合到Graphite，并用Docker容器运行。
 
