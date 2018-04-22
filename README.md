@@ -258,6 +258,9 @@ sudo docker pull ubuntu:12.04
 Docker Hub里有两种类型仓库，用户仓库和顶层仓库。顶层仓库由Docker内部管理。  
 用户仓库命名由用户名和仓库名组成，如swordrain/first
 
+如果从非官方下载，要在仓库前指定完整的地址`docker pull hub.c.163.com/public/ubuntu:16.04`
+
+
 ### 拉取镜像
 在`docker run`启动镜像时，如果不存在，会从Docker Hub上下载，如果没有指定具体标签，会自动下载latest标签的镜像。
 ![docker_pull_result](https://github.com/swordrain/docker-notes/blob/master/image/docker_pull_result.png)  
