@@ -272,6 +272,12 @@ Docker Hub里有两种类型仓库，用户仓库和顶层仓库。顶层仓库�
 使用`docker commit`命令  
 使用`docker build`命令和`Dockerfile`文件  
 
+### 创建容器
+使用`docker create`命令，如
+```
+docker create -it ubuntu:latest
+```
+
 #### 登陆到Docker Hub  
 ```
 sudo docker login
@@ -296,7 +302,7 @@ sudo docker images swordrain/new
 sudo docker commit -m "A new custom image" -a "swordrain" lianli_commit swordrain/new:anotherNew
 ```
 ![docker_commit](https://github.com/swordrain/docker-notes/blob/master/image/docker_commit.png)  
-查看镜像的详细信息
+查看镜像的详细信息  
 ![docker_image_detail](https://github.com/swordrain/docker-notes/blob/master/image/docker_image_detail.png)  
 运行新提交的镜像  
 ![docker_run_new_commit](https://github.com/swordrain/docker-notes/blob/master/image/docker_run_new_commit.png)  
